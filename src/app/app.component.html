@@ -1,22 +1,6 @@
 <h1>Type File</h1>
 <input type="file" (change)="handleFileInput($event.target.files)">
-<button (click)="setFocus()">Set Focus</button>
-<br>
-<textarea #textTextArea [(ngModel)]="text" cols="50" rows="8" readonly></textarea>
-<textarea
-  #wordTypedTextArea
-  [(ngModel)]="currentWordTypedLetters"
-  (keydown)="onKeydown($event)"
-  class="anchor"
-  style="z-index: 5;"
-  [style.left.px]="textAreaPositionWordTyped.left"
-  [style.top.px]="textAreaPositionWordTyped.top"
-  [style.width.px]="textAreaPositionWordTyped.width"></textarea>
-<textarea
-  #wordRemainingTextArea
-  [(ngModel)]="currentWordRemainingLetters"
-  class="anchor"
-  readonly
-  [style.left.px]="textAreaPositionWordRemaining.left"
-  [style.top.px]="textAreaPositionWordRemaining.top"
-  [style.width.px]="textAreaPositionWordRemaining.width"></textarea>
+<button (click)="setTextColour()">TOGGLE</button>
+<span class="currentLetter">HI</span>
+<div id="contentContainer"></div>
+<input (keydown)="onKeydown($event)">
