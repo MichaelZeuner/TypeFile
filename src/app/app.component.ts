@@ -76,20 +76,40 @@ export class AppComponent {
     }
   }
 
+  convertKey(key: string): string {
+    if (key.length === 1) {
+      return key;
+    }
+    else if (key === 'Enter') {
+      return ENTER_CHAR;
+    }
+    else {
+      return key;
+    }
+  }
+
   onKeydown(event: KeyboardEvent) {
     if (event.key === "Backspace") {
       this.setTextColour(CharacterEnum.None);
       this.currentIndex--;
     }
     else if (event.key.length === 1 || event.key === "Enter") {
-      if (event.key === this.spanArray[this.currentIndex].text || (event.key === "Enter" && this.spanArray[this.currentIndex].text === ENTER_CHAR)) {
+      if (this.convertKey(event.key) === this.spanArray[this.currentIndex].text) {
         this.setTextColour(CharacterEnum.CorrectLetter);
       } else {
         this.setTextColour(CharacterEnum.IncorrectLetter);
+
+        const correctKey = this.spanArray[this.currentIndex].text;
+        this.spanArray[this.currentIndex].text = this.convertKey(event.key);
+        setTimeout(this.incorrectKeyTimeoutFunction, 500, this.spanArray, correctKey, this.currentIndex);
       }
       this.currentIndex++;
       (<HTMLInputElement>document.getElementById('inputTextId')).value = null;
     }
     this.setTextColour(CharacterEnum.NextLetter);
+  }
+
+  incorrectKeyTimeoutFunction(spanArray, correctKey, index) {
+    spanArray[index].text = correctKey;
   }
 }
