@@ -1,6 +1,10 @@
+.baseSpan {
+  font-size: x-large;
+  font-family: monospace;
+}
+
 .nextLetter {
-  background-color: indigo;
-  color: white;
+  text-decoration: underline;
 }
 
 .incorrectLetter {

@@ -12,7 +12,7 @@ enum CharacterEnum {
   CorrectLetter = 'correctLetter'
 }
 
-const charWidth: number = 8;
+const ENTER_CHAR = '&#x21a9;';
 
 @Component({
   selector: 'app-root',
@@ -23,9 +23,8 @@ const charWidth: number = 8;
   },
 })
 export class AppComponent {
-  title = 'type-file';
 
-  public content!: ElementRef;
+  public ENTER_CHAR = ENTER_CHAR;
 
   private spanArray: ElementData[] = [];
   private currentIndex: number = 0;
@@ -40,8 +39,13 @@ export class AppComponent {
       const fullText = eventTarget.result.toString();
 
       for (let i = 0; i < fullText.length; i++) {
+        let val = fullText[i];
+        if (fullText.charCodeAt(i) === 10) {
+          val = ENTER_CHAR;
+        }
+
         this.spanArray.push({
-          text: fullText[i],
+          text: val,
           class: ''
         });
       }
@@ -59,8 +63,6 @@ export class AppComponent {
   }
 
   setTextColour(color: CharacterEnum) {
-    console.log('set class');
-    console.log(this.spanArray[this.currentIndex]);
     this.spanArray[this.currentIndex].class = color;
   }
 
@@ -75,14 +77,12 @@ export class AppComponent {
   }
 
   onKeydown(event: KeyboardEvent) {
-    console.log(event);
-    console.log(event.key, this.spanArray[this.currentIndex].text);
     if (event.key === "Backspace") {
       this.setTextColour(CharacterEnum.None);
       this.currentIndex--;
     }
-    else if (event.key.length === 1) {
-      if (event.key === this.spanArray[this.currentIndex].text) {
+    else if (event.key.length === 1 || event.key === "Enter") {
+      if (event.key === this.spanArray[this.currentIndex].text || (event.key === "Enter" && this.spanArray[this.currentIndex].text === ENTER_CHAR)) {
         this.setTextColour(CharacterEnum.CorrectLetter);
       } else {
         this.setTextColour(CharacterEnum.IncorrectLetter);
