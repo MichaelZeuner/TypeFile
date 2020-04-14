@@ -1,6 +1,12 @@
 <h1>Type File</h1>
-<input type="file" (change)="handleFileInput($event.target.files)">
+<input type="file" id="fileInputId" (change)="handleFileInput($event.target.files)">
 <button (click)="setTextColour()">TOGGLE</button>
+<button (click)="reset()">Reset</button>
 <span class="currentLetter">HI</span>
+
+<br>
+<ng-container *ngFor="let spanData of spanArray">
+    <span [class]="spanData.class">{{spanData.text}}</span>
+</ng-container>
 <div id="contentContainer"></div>
-<input (keydown)="onKeydown($event)">
+<input id="inputTextId" (keydown)="onKeydown($event)">

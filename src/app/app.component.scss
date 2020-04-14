@@ -1,3 +1,13 @@
-.currentLetter {
-  color: blue;
+.nextLetter {
+  background-color: indigo;
+  color: white;
+}
+
+.incorrectLetter {
+  background-color: red;
+  color: white;
+}
+
+.correctLetter {
+  color: gray;
 }
