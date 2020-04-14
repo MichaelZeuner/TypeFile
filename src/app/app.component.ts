@@ -3,6 +3,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 interface ElementData {
   text: string;
   class: string;
+  breakLine: boolean;
 }
 
 enum CharacterEnum {
@@ -24,8 +25,6 @@ const ENTER_CHAR = '&#x21a9;';
 })
 export class AppComponent {
 
-  public ENTER_CHAR = ENTER_CHAR;
-
   private spanArray: ElementData[] = [];
   private currentIndex: number = 0;
 
@@ -40,13 +39,16 @@ export class AppComponent {
 
       for (let i = 0; i < fullText.length; i++) {
         let val = fullText[i];
+        let breakLine = false;
         if (fullText.charCodeAt(i) === 10) {
           val = ENTER_CHAR;
+          breakLine = true;
         }
 
         this.spanArray.push({
           text: val,
-          class: ''
+          class: '',
+          breakLine: breakLine
         });
       }
 

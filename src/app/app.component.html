@@ -4,7 +4,7 @@
 <br>
 <ng-container *ngFor="let spanData of spanArray">
     <span class="{{spanData.class}} baseSpan" [innerHTML]="spanData.text"></span>
-    <br *ngIf="spanData.text === ENTER_CHAR">
+    <br *ngIf="spanData.breakLine">
 </ng-container>
 <div id="contentContainer"></div>
 <input id="inputTextId" (keydown)="onKeydown($event)">
