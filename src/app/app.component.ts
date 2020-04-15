@@ -1,8 +1,9 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
+import { iif } from 'rxjs';
 
 interface ElementData {
   text: string;
-  class: string;
+  class: CharacterEnum;
   breakLine: boolean;
 }
 
@@ -30,6 +31,8 @@ export class AppComponent {
 
   private startTime: Date = null;
   private endTime: Date = null;
+  private wpm: number = -1;
+  private errors: number = -1;
 
   constructor() { }
 
@@ -46,19 +49,20 @@ export class AppComponent {
         if (fullText.charCodeAt(i) === 10) {
           val = ENTER_CHAR;
           breakLine = true;
-        } else if(fullText.charCodeAt(i) === 13) {
+        } else if (fullText.charCodeAt(i) === 13) {
           continue;
         }
 
         this.spanArray.push({
           text: val,
-          class: '',
+          class: CharacterEnum.None,
           breakLine: breakLine
         });
       }
 
       this.currentIndex = 0;
       this.setTextColour(CharacterEnum.NextLetter);
+      document.getElementById('inputTextId').focus();
     }
 
     reader.onerror = error => this.reject(error);
@@ -75,6 +79,10 @@ export class AppComponent {
 
   reset() {
     this.currentIndex = 0;
+    this.wpm = -1;
+    this.errors = -1;
+    this.startTime = null;
+    this.endTime = null;
     this.spanArray = [];
     (<HTMLInputElement>document.getElementById('fileInputId')).value = null;
     const contentContainer = document.getElementById('contentContainer');
@@ -96,8 +104,8 @@ export class AppComponent {
   }
 
   onKeydown(event: KeyboardEvent) {
-    if(this.endTime === null) {
-      if(this.startTime === null) {
+    if (this.endTime === null) {
+      if (this.startTime === null) {
         this.startTime = new Date();
       }
 
@@ -119,7 +127,7 @@ export class AppComponent {
         (<HTMLInputElement>document.getElementById('inputTextId')).value = null;
       }
 
-      if(this.currentIndex < this.spanArray.length) {
+      if (this.currentIndex < this.spanArray.length) {
         this.setTextColour(CharacterEnum.NextLetter);
       } else {
         this.endTest();
@@ -129,7 +137,22 @@ export class AppComponent {
 
   endTest() {
     this.endTime = new Date();
-    console.log(this.endTime.getTime() - this.startTime.getTime());
+    const ms = this.endTime.getTime() - this.startTime.getTime();
+    const words = this.spanArray.length / 5;
+    const minutes = ms / 1000 / 60;
+    this.wpm = words / (minutes);
+
+    this.errors = 0;
+    for (let i = 0; i < this.spanArray.length; i++) {
+      if (this.spanArray[i].class === CharacterEnum.IncorrectLetter) {
+        this.errors++;
+      }
+    }
+
+    console.log('Time', ms, minutes);
+    console.log('words', words);
+    console.log('errors', this.errors);
+    console.log('WPM', this.wpm)
   }
 
   incorrectKeyTimeoutFunction(spanArray, correctKey, index) {

@@ -8,3 +8,5 @@
 </ng-container>
 <div id="contentContainer"></div>
 <input id="inputTextId" (keydown)="onKeydown($event)">
+<h1 *ngIf="wpm > -1">WPM: {{wpm}}</h1>
+<h2 *ngIf="errors > -1">Errors: {{errors}}</h2>
