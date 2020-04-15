@@ -28,6 +28,9 @@ export class AppComponent {
   private spanArray: ElementData[] = [];
   private currentIndex: number = 0;
 
+  private startTime: Date = null;
+  private endTime: Date = null;
+
   constructor() { }
 
   handleFileInput(files: FileList) {
@@ -43,6 +46,8 @@ export class AppComponent {
         if (fullText.charCodeAt(i) === 10) {
           val = ENTER_CHAR;
           breakLine = true;
+        } else if(fullText.charCodeAt(i) === 13) {
+          continue;
         }
 
         this.spanArray.push({
@@ -91,24 +96,40 @@ export class AppComponent {
   }
 
   onKeydown(event: KeyboardEvent) {
-    if (event.key === "Backspace") {
-      this.setTextColour(CharacterEnum.None);
-      this.currentIndex--;
-    }
-    else if (event.key.length === 1 || event.key === "Enter") {
-      if (this.convertKey(event.key) === this.spanArray[this.currentIndex].text) {
-        this.setTextColour(CharacterEnum.CorrectLetter);
-      } else {
-        this.setTextColour(CharacterEnum.IncorrectLetter);
-
-        const correctKey = this.spanArray[this.currentIndex].text;
-        this.spanArray[this.currentIndex].text = this.convertKey(event.key);
-        setTimeout(this.incorrectKeyTimeoutFunction, 500, this.spanArray, correctKey, this.currentIndex);
+    if(this.endTime === null) {
+      if(this.startTime === null) {
+        this.startTime = new Date();
       }
-      this.currentIndex++;
-      (<HTMLInputElement>document.getElementById('inputTextId')).value = null;
+
+      if (event.key === "Backspace") {
+        this.setTextColour(CharacterEnum.None);
+        this.currentIndex--;
+      }
+      else if (event.key.length === 1 || event.key === "Enter") {
+        if (this.convertKey(event.key) === this.spanArray[this.currentIndex].text) {
+          this.setTextColour(CharacterEnum.CorrectLetter);
+        } else {
+          this.setTextColour(CharacterEnum.IncorrectLetter);
+
+          const correctKey = this.spanArray[this.currentIndex].text;
+          this.spanArray[this.currentIndex].text = this.convertKey(event.key);
+          setTimeout(this.incorrectKeyTimeoutFunction, 500, this.spanArray, correctKey, this.currentIndex);
+        }
+        this.currentIndex++;
+        (<HTMLInputElement>document.getElementById('inputTextId')).value = null;
+      }
+
+      if(this.currentIndex < this.spanArray.length) {
+        this.setTextColour(CharacterEnum.NextLetter);
+      } else {
+        this.endTest();
+      }
     }
-    this.setTextColour(CharacterEnum.NextLetter);
+  }
+
+  endTest() {
+    this.endTime = new Date();
+    console.log(this.endTime.getTime() - this.startTime.getTime());
   }
 
   incorrectKeyTimeoutFunction(spanArray, correctKey, index) {
