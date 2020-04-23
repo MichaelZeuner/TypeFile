@@ -5,13 +5,15 @@ interface ElementData {
   text: string;
   class: CharacterEnum;
   breakLine: boolean;
+  hasBeenIncorrect: boolean;
 }
 
 enum CharacterEnum {
   None = '',
   NextLetter = 'nextLetter',
   IncorrectLetter = 'incorrectLetter',
-  CorrectLetter = 'correctLetter'
+  CorrectLetter = 'correctLetter',
+  FixedLetter = 'fixedLetter'
 }
 
 const ENTER_CHAR = '&#x21a9;';
@@ -33,6 +35,7 @@ export class AppComponent {
   private endTime: Date = null;
   private wpm: number = -1;
   private errors: number = -1;
+  private fixedErrors: number = -1;
 
   constructor() { }
 
@@ -56,7 +59,8 @@ export class AppComponent {
         this.spanArray.push({
           text: val,
           class: CharacterEnum.None,
-          breakLine: breakLine
+          breakLine: breakLine,
+          hasBeenIncorrect: false
         });
       }
 
@@ -75,12 +79,20 @@ export class AppComponent {
 
   setTextColour(color: CharacterEnum) {
     this.spanArray[this.currentIndex].class = color;
+    if (color === CharacterEnum.IncorrectLetter) {
+      this.spanArray[this.currentIndex].hasBeenIncorrect = true;
+    }
+
+    if (color === CharacterEnum.CorrectLetter && this.spanArray[this.currentIndex].hasBeenIncorrect) {
+      this.spanArray[this.currentIndex].class = CharacterEnum.FixedLetter;
+    }
   }
 
   reset() {
     this.currentIndex = 0;
     this.wpm = -1;
     this.errors = -1;
+    this.fixedErrors = -1;
     this.startTime = null;
     this.endTime = null;
     this.spanArray = [];
@@ -146,6 +158,8 @@ export class AppComponent {
     for (let i = 0; i < this.spanArray.length; i++) {
       if (this.spanArray[i].class === CharacterEnum.IncorrectLetter) {
         this.errors++;
+      } else if (this.spanArray[i].class === CharacterEnum.FixedLetter) {
+        this.fixedErrors++;
       }
     }
 
